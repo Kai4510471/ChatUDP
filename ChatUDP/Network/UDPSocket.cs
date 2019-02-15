@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection.Emit;
 using System.Threading.Tasks;
+using ChatUDP.Event.Network;
 
 namespace ChatUDP.Network
 {
@@ -12,9 +13,12 @@ namespace ChatUDP.Network
 
         public IPAddress Address { get; }
         public ushort Port { get; }
+        
+        public long DownloadLengths { get; private set; }
+        public long UploadLengths { get; private set; }
 
-        public event EventHandler<EventArgs> Download;
-        public event EventHandler<EventArgs> Upload;
+        public event EventHandler<DownloadEventArgs> Download;
+        public event EventHandler<UploadEventArgs> Upload;
 
         public UDPSocket(ushort port) : this(IPAddress.Any, port)
         {
@@ -28,14 +32,28 @@ namespace ChatUDP.Network
             _client = new UdpClient(new IPEndPoint(Address, Port));
         }
 
-        public async Task<UdpReceiveResult> Receive()
+        public async void Receive()
         {
-            return await _client.ReceiveAsync();
+            UdpReceiveResult result = await _client.ReceiveAsync();
+            DownloadLengths += result.Buffer.Length;
+            OnDownload(this, new DownloadEventArgs(result));
         }
 
-        public async Task<int> Send(IPEndPoint endPoint, byte[] buffer)
+        public async void Send(IPEndPoint endPoint, byte[] buffer)
         {
-            return await _client.SendAsync(buffer, buffer.Length, endPoint);
+            int len = await _client.SendAsync(buffer, buffer.Length, endPoint);
+            UploadLengths += len;
+            OnUpload(this, new UploadEventArgs(len));
+        }
+
+        private void OnDownload(object sender, DownloadEventArgs args)
+        {
+            Download?.Invoke(sender, args);
+        }
+
+        private void OnUpload(object sender, UploadEventArgs args)
+        {
+            Upload?.Invoke(sender, args);
         }
     }
 }
