@@ -81,5 +81,22 @@ namespace ChatUDP.Network
         {
             return $"[UDPChat] Up: {UploadLengths} byte - Down: {DownloadLengths} byte";
         }
+        
+        public string getIPAddress()
+        {
+            string ipaddress = "";
+            IPHostEntry ipentry = Dns.GetHostEntry(Dns.GetHostName());
+ 
+            foreach (IPAddress ip in ipentry.AddressList)
+            {
+                if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                {
+                    ipaddress = ip.ToString();
+                    break;
+                }
+            }
+            return ipaddress;
+        }
     }
+    
 }

@@ -12,6 +12,7 @@ namespace ChatUDP
         private UDPSocket _socket;
         private Thread _networkThread;
         private bool _isKilled;
+        private string _myIp;
         
         public ChatUDP()
         {
@@ -28,6 +29,7 @@ namespace ChatUDP
             _networkThread = new Thread(OnReceive);
             _networkThread.Name = "NetworkThread";
             _networkThread.Start();
+            _myIp = _socket.getIPAddress();
             IPAddress ip = null;
             while(ip == null)
             {
@@ -73,6 +75,11 @@ namespace ChatUDP
 
         private void Socket_OnDownload(object sender, DownloadEventArgs e)
         {
+            if (_myIp == e.Result.RemoteEndPoint.Address.ToString())
+            {
+                return;
+            }
+            
             Console.Title = _socket.ToUpDownString();
             Console.WriteLine("<" + e.Result.RemoteEndPoint.ToString() + ">" + Encoding.UTF8.GetString(e.Result.Buffer));
         }
