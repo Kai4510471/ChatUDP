@@ -25,17 +25,17 @@ namespace ChatUDP
             _networkThread = new Thread(OnReceive);
             _networkThread.Name = "NetworkThread";
             _networkThread.Start();
-            
-            InputLoop();
+            Console.WriteLine("IPアドレスを入力");
+            string address = Console.ReadLine();
+            IPAddress ip = IPAddress.Parse(address);
+            InputLoop(ip);
         }
 
-        private void InputLoop()
+        private void InputLoop(IPAddress ip)
         {
             while (true)
             {
-                string msg = Console.ReadLine();
-                string[] args = msg.Split(':');
-                _socket.Send(new IPEndPoint(IPAddress.Parse(args[0]), 12345), Encoding.UTF8.GetBytes(args[1]));
+                _socket.Send(new IPEndPoint(ip, 12345), Encoding.UTF8.GetBytes(Console.ReadLine()));
             }
         }
 
