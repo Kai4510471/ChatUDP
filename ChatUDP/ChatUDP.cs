@@ -18,6 +18,8 @@ namespace ChatUDP
             _socket = new UDPSocket(12345);
             _socket.Download += Socket_OnDownload;
             _socket.Upload += Socket_OnUpload;
+
+            Console.Title = _socket.ToUpDownString();
         }
 
         public void Start()
@@ -38,11 +40,9 @@ namespace ChatUDP
                 {
                     Console.WriteLine(e);
                 }
-
             }
             Console.WriteLine("<Chat>");
             InputLoop(ip);
-            
         }
 
         private void InputLoop(IPAddress ip)
@@ -50,7 +50,7 @@ namespace ChatUDP
             while (true)
             {
                 string msg = Console.ReadLine();
-                if (msg.Length != 0)
+                if (msg?.Length != 0)
                 {
                     _socket.Send(new IPEndPoint(ip, 12345), Encoding.UTF8.GetBytes(msg));
                 }
@@ -67,11 +67,13 @@ namespace ChatUDP
 
         private void Socket_OnUpload(object sender, UploadEventArgs e)
         {
+            Console.Title = _socket.ToUpDownString();
         }
 
         private void Socket_OnDownload(object sender, DownloadEventArgs e)
         {
-            Console.WriteLine(Encoding.UTF8.GetString(e.Result.Buffer));
+            Console.Title = _socket.ToUpDownString();
+            Console.WriteLine("<" + e.Result.RemoteEndPoint.ToString() + ">" + Encoding.UTF8.GetString(e.Result.Buffer));
         }
     }
 }

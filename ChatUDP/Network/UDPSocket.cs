@@ -70,5 +70,10 @@ namespace ChatUDP.Network
         {
             Upload?.Invoke(sender, args);
         }
+
+        public string ToUpDownString()
+        {
+            return $"[UDPChat] Up: {UploadLengths} byte - Down: {DownloadLengths} byte";
+        }
     }
 }
