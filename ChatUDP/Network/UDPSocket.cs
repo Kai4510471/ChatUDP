@@ -13,6 +13,12 @@ namespace ChatUDP.Network
 
         public IPAddress Address { get; }
         public ushort Port { get; }
+
+        public bool IsBroadcast
+        {
+            get { return _client.EnableBroadcast; }
+            set { _client.EnableBroadcast = value; }
+        }
         
         public long DownloadLengths { get; private set; }
         public long UploadLengths { get; private set; }

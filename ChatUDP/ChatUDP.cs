@@ -18,6 +18,7 @@ namespace ChatUDP
             _socket = new UDPSocket(12345);
             _socket.Download += Socket_OnDownload;
             _socket.Upload += Socket_OnUpload;
+            _socket.IsBroadcast = true;
 
             Console.Title = _socket.ToUpDownString();
         }
