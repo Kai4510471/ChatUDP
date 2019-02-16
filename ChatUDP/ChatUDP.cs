@@ -25,10 +25,24 @@ namespace ChatUDP
             _networkThread = new Thread(OnReceive);
             _networkThread.Name = "NetworkThread";
             _networkThread.Start();
-            Console.WriteLine("IPアドレスを入力");
-            string address = Console.ReadLine();
-            IPAddress ip = IPAddress.Parse(address);
+            IPAddress ip = null;
+            while(ip == null)
+            {
+                Console.WriteLine("IPアドレスを入力");
+                string address = Console.ReadLine();
+                try
+                {
+                    ip = IPAddress.Parse(address);
+                }
+                catch(FormatException e)
+                {
+                    Console.WriteLine(e);
+                }
+
+            }
+            Console.WriteLine("<Chat>");
             InputLoop(ip);
+            
         }
 
         private void InputLoop(IPAddress ip)
