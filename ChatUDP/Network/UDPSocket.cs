@@ -32,16 +32,31 @@ namespace ChatUDP.Network
             _client = new UdpClient(new IPEndPoint(Address, Port));
         }
 
-        public async void Receive()
+        public async void ReceiveAsync()
         {
             UdpReceiveResult result = await _client.ReceiveAsync();
             DownloadLengths += result.Buffer.Length;
             OnDownload(this, new DownloadEventArgs(result));
         }
 
-        public async void Send(IPEndPoint endPoint, byte[] buffer)
+        public void Receive()
+        {
+            IPEndPoint endPoint = null;
+            byte[] buffer = _client.Receive(ref endPoint);
+            DownloadLengths += buffer.Length;
+            OnDownload(this, new DownloadEventArgs(new UdpReceiveResult(buffer, endPoint)));
+        }
+
+        public async void SendAsync(IPEndPoint endPoint, byte[] buffer)
         {
             int len = await _client.SendAsync(buffer, buffer.Length, endPoint);
+            UploadLengths += len;
+            OnUpload(this, new UploadEventArgs(len));
+        }
+
+        public void Send(IPEndPoint endPoint, byte[] buffer)
+        {
+            int len = _client.Send(buffer, buffer.Length, endPoint);
             UploadLengths += len;
             OnUpload(this, new UploadEventArgs(len));
         }
