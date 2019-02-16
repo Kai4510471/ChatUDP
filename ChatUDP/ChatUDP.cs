@@ -49,7 +49,11 @@ namespace ChatUDP
         {
             while (true)
             {
-                _socket.Send(new IPEndPoint(ip, 12345), Encoding.UTF8.GetBytes(Console.ReadLine()));
+                string msg = Console.ReadLine();
+                if (msg.Length != 0)
+                {
+                    _socket.Send(new IPEndPoint(ip, 12345), Encoding.UTF8.GetBytes(msg));
+                }
             }
         }
 
