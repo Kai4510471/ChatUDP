@@ -25,6 +25,8 @@ namespace ChatUDP
             _networkThread = new Thread(OnReceive);
             _networkThread.Name = "NetworkThread";
             _networkThread.Start();
+            
+            InputLoop();
         }
 
         private void InputLoop()
